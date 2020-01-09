@@ -1,0 +1,242 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    {% block title %}
+
+
+        <title>Shop Homepage - Start Bootstrap Template</title>
+    {% endblock title %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href='{% static "css/shop-homepage.css" %}'>
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href='{% url "base" %}'>Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+            {% if  not request.get_full_path == '/' %}
+
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Categories
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% for category in categories %}
+
+
+                            <a class="dropdown-item" href='{{ category.get_absolute_url }}'>{{ category.title }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+
+            {% endif %}
+            {% if not request.user.is_authenticated %}
+
+                <li class="nav-item navbar-text">
+                    Здравствуйте,гость!
+                </li>
+                <li class='nav-item navbar-text mx-3'>
+                    Пожалуйста,<a href='{% url "registration" %}'> зарегистрируйтесь </a> или <a
+                        href='{% url "login" %}'>войдите</a>
+                </li>
+            {% else %}
+
+
+                <li class="nav-item navbar-text mx-3">
+                    Здравствуйте,{{ request.user }}!
+                </li>
+                <li class='nav-item navbar-text mx-3'><a href='{% url "account" %}'> Личный кабинет</a></li>
+                <li class='nav-item navbar-text mx-5 btn btn-danger'><a href='{% url "logout" %}'>Выйти</a></li>
+            {% endif %}
+
+        </ul>
+
+    </div>
+    <form class="form-inline my-2 my-lg-0" action="{% url 'base' %}">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+    <ul class='nav navbar-nav navbar-right' style='margin-left:30px'>
+        <li><a href='{% url "cart" %}'>Корзина <span class='badge' id='cart_count'>
+  {% if not request.session.total %} 0 {% else %} {{ request.session.total }} {% endif %}</span></a></li>
+    </ul>
+</nav>
+<!-- Navigation -->
+
+{% block content %}
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-lg-3">
+
+                <h1 class="my-4">Shop Name</h1>
+                <div class="list-group">
+                    {% for category in categories %}
+                        <li class="list-group-item text-center">
+                            <a href="{{ category.get_absolute_url }}" class="list-group-item list-group-item-action">
+                                {{ category.title }}</a></li>
+
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- /.col-lg-3 -->
+
+            <div class="col-lg-9">
+
+                <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                    </ol>
+                    <div class="carousel-inner" role="listbox">
+                        {% for product in products %}
+                            {% if forloop.first %}
+                                <div class="carousel-item active" style='background-color:black; '>
+                                    <img class="d-block img-fluid" src="{{ product.image.url }}" alt="First slide"
+                                         style='background-color:black; padding-left:350px; height:250px;'>
+                                    <p class="text-center pt-2 pb-4"><a href="{{ product.get_absolute_url }}">
+                                        <button class="btn btn-primary">{{ product.title }}</button>
+                                    </a></p>
+                                </div>
+                            {% else %}
+
+                                <div class="carousel-item" style='background-color:black; '>
+                                    <img class="d-block img-fluid" src="{{ product.image.url }}" alt="Second slide"
+                                         style='background-color:black; padding-left:350px; height:250px;'>
+
+                                    <p class="text-center pt-2 pb-4"><a href="{{ product.get_absolute_url }}">
+                                        <button class="btn btn-primary">{{ product.title }}</button>
+                                    </a></p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+
+                <div class="row">
+                    {% for product in products %}
+
+
+
+                        <div class="col-lg-4 col-md-6 mb-4 text-center">
+                            <div class="card h-100">
+                                <a href="#"><img class="card-img-top" src='
+                {{ product.image.url }}' alt="" style="width:50%; height:150px;"></a>
+                                <div class="card-body">
+                                    <h4 class="card-title"><strong>
+                                        <a href="{{ product.get_absolute_url }}">{{ product.title }}</a></strong>
+                                    </h4>
+                                    <h5>{{ product.price }}руб</h5>
+                                    <p class="card-text">{{ product.description }}</p>
+                                </div>
+                                <div class="card-footer">
+                                    {% if request.user.is_authenticated %}
+
+
+
+                                        <p class=""><a href="#" class="add_to_cart" data-slug='{{ product.slug }}'>
+                                            <button class="btn btn-danger">Добавить в корзину</button>
+                                        </a></p>
+                                    {% else %}
+                                        <p class="text-center"> Заказывать товар могут только авторизированные
+                                            пользователи.Пожалуйста <a href='{% url "login" %}'>войдите</a> или <a
+                                                    href='{% url "registration" %}'>зарегистрируйтесь</a></p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+                <!-- /.row -->
+
+            </div>
+            <!-- /.col-lg-9 -->
+
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+{% endblock content %}
+<!-- Footer -->
+{% block footer %}
+
+    <!--
+  <footer class="py-5 bg-dark fixed-bottom" style="height:30px">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2019</p>
+    </div>
+    /.container
+  </footer>
+  {% endblock footer %}
+ -->
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script src='{% static "js/jquery.js" %}'></script>
+<script>
+    $(document).ready(function () {
+        $('.add_to_cart').on('click', function (e) {
+            e.preventDefault()
+            product_slug = $(this).attr('data-slug')
+            data = {
+                product_slug: product_slug
+            }
+            $.ajax({
+                type: "GET",
+                url: '{% url "add_to_cart" %}',
+                data: data,
+                success: function (data) {
+                    $("#cart_count").html(data.cart_total)
+                }
+            })
+        })
+    });
+</script>
+</body>
+</html>
